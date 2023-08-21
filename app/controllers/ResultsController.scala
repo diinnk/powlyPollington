@@ -26,7 +26,10 @@ class ResultsController @Inject()(val controllerComponents: ControllerComponents
       s"""<h6>${poll.pollDesc}</h6>""",
       """<table class="resultsChart"><tbody>"""
     )
-    val htmlFooterLineList: List[String] = List("""<tr style="visibility: collapse"><th class="blankCell"></th></tr></tbody></table>""")
+    val htmlFooterLineList: List[String] = List(
+    """<tr style="visibility: collapse"><th class="blankCell"></th></tr></tbody></table>""",
+      s"""<div><button type="button" style="float: right;" onclick="window.location.replace('./?p=${poll.pollID}')">Go Vote</button></div>"""
+    )
     val totalVotes = poll.voteDetail.length.toDouble
     val htmlTableRowList: List[(Int, String, String)] = poll.pollOptions.map{s =>
       val voteCount = poll.voteSummaries.find(_.optionId == s.optionID).getOrElse(Defaults.voteSummary).voteCount

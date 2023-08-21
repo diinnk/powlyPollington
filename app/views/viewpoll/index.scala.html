@@ -1,7 +1,7 @@
 @import config.ConfigManager
 @(renderedPollHTML: String, pollID: Int)
 
-  @viewpoll.main(ConfigManager.title + " - get") {
+  @viewpoll.main(ConfigManager.title + " - Vote ("+pollID+")") {
     <h2>
     @ConfigManager.welcomeMessage
     </h2>

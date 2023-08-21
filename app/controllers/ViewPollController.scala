@@ -53,7 +53,7 @@ class ViewPollController @Inject()(val controllerComponents: ControllerComponent
     )
     val htmlFooterLineList: List[String] = if (pollPayload.found) List(
       s"""<br>""",
-      s"""<input type="submit" value="Cast Vote">""",
+      s"""<input type="submit" value="Cast Vote"><button type="button" style="float: right;" onclick="window.location.replace('./results?p=${pollPayload.pollID}')">See Results</button>""",
       s"""</form>""",
       s"""<div id="voteMessage" hidden=""></div>"""
     ) else List.empty
