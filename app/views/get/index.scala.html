@@ -1,0 +1,15 @@
+@import config.ConfigManager
+@(renderedPollHTML: String, pollID: Int)
+
+  @get.main(ConfigManager.title + " - get") {
+    <h1>
+    @ConfigManager.welcomeMessage
+    </h1>
+
+    @Html(renderedPollHTML)
+
+    <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
+    <script>
+      pollID = @pollID
+    </script>
+  }

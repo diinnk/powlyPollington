@@ -1,0 +1,10 @@
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+
+GET     /                           controllers.ViewPollController.index()
+GET     /allPolls                   controllers.ViewPollController.allPolls()
+GET     /viewPoll                   controllers.ViewPollController.viewPoll()
+
+GET     /createPoll                 controllers.CreatePollController.index()
+POST    /createPoll                 controllers.CreatePollController.create()
+
+POST    /castVote                   controllers.CastVoteController.castVote()
