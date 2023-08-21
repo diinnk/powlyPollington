@@ -13,20 +13,20 @@ trait PollDBHelper extends H2Helper {
 
 object PollDBHelper extends H2Helper {
   // stand-up the H2 database
-  val pollDBStoodUp: Boolean = {
+  private val _: Boolean = {
     implicit val standUpConn: Connection = getH2Conn
     Try(
       autoClose {
         execH2Cmd(
           s"""create table if not exists $pollDBTableName (
-            |   pollId int auto_increment not null PRIMARY KEY,
-            |   pollTitle varchar not null,
-            |   pollDesc varchar not null,
-            |   added datetime not null,
-            |   allowMultipleSelections bool not null,
-            |   allowMultipleIndividualVoteActions bool not null,
-            |   uniqueIndividualIdentifierLabel varchar null
-            |);""".stripMargin)
+             |   pollId int auto_increment not null PRIMARY KEY,
+             |   pollTitle varchar not null,
+             |   pollDesc varchar not null,
+             |   added datetime not null,
+             |   allowMultipleSelections bool not null,
+             |   allowMultipleIndividualVoteActions bool not null,
+             |   uniqueIndividualIdentifierLabel varchar null
+             |);""".stripMargin)
         execH2Cmd(
           s"""create table if not exists $pollOptionsDBTableName (
              |  optionId int auto_increment not null PRIMARY KEY,
@@ -43,22 +43,23 @@ object PollDBHelper extends H2Helper {
              |);""".stripMargin)
 
         //todo: remove me later
-        controllers.create.DBOps.addPollToDB(CreatePollRequest(
-          message = None,
-          pollTitle = "Pick a beer",
-          pollDesc = "Pick a new beer for one of our empty taps",
-          allowMultipleSelections = false,
-          allowMultipleIndividualVoteActions = true,
-          uniqueIndividualIdentifierLabel = Option("Member Number"),
-          pollOptions = List(
-            PollOptions(1, "Pineapple GOAT"),
-            PollOptions(1, "Vienna Red"),
-            PollOptions(1, "Mexican Lager with Salt and Lime"),
-            PollOptions(1, "Vanilla Tangerine Cream Ale"),
-            PollOptions(1, "Luigi''s Salted Lime Ale"),
-          ),
-          successful = None
-        ))
+        if (controllers.view.DBOps.getAll(0).isEmpty)
+          controllers.create.DBOps.addPollToDB(CreatePollRequest(
+            message = None,
+            pollTitle = "Pick a beer",
+            pollDesc = "Pick a new beer for one of our empty taps",
+            allowMultipleSelections = false,
+            allowMultipleIndividualVoteActions = true,
+            uniqueIndividualIdentifierLabel = Option("Member Number"),
+            pollOptions = List(
+              PollOptions(1, "Pineapple GOAT"),
+              PollOptions(1, "Vienna Red"),
+              PollOptions(1, "Mexican Lager with Salt and Lime"),
+              PollOptions(1, "Vanilla Tangerine Cream Ale"),
+              PollOptions(1, "Luigi''s Salted Lime Ale"),
+            ),
+            successful = None
+          ))
 
       }
     ) match {

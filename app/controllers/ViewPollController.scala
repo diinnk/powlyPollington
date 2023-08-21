@@ -1,11 +1,13 @@
 package controllers
 
-import common.GlobalWritesAndFormats
+import common.{Defaults, GlobalWritesAndFormats}
+import config.ConfigManager.includeStaticVoteCountOnCastVotePage
 import controllers.view.DBOps.{getAll, getLatestPollID, getPollPayload}
 import db.PollDBHelper
 import error.NoPollFoundException
 import payloads.{GetPollPayload, PollBasics}
 import play.api.libs.json._
+import Common.getPollID
 
 import javax.inject._
 import play.api.mvc._
@@ -18,44 +20,52 @@ class ViewPollController @Inject()(val controllerComponents: ControllerComponent
 
   def index: Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     val returnedPollID = getPollID(request.queryString)
-    val pollSelectionList = getAll(getLatestPollID)
+    val pollSelectionList = getAll(returnedPollID)
     val renderedSelect = getRenderedSelect(pollSelectionList, returnedPollID)
     val poll = getPollPayload(returnedPollID)
-    val renderedPoll = getRenderedPoll(poll)
+    val renderedPoll = getRenderedPoll(
+      if (pollSelectionList.isEmpty) poll.copy(pollTitle = "No polls have been created yet")
+      else if (!poll.found) poll.copy(pollTitle = "Poll doesn't exist, please select a different poll")
+      else poll
+    )
     val comboHTML = renderedSelect+renderedPoll
 
-    Ok(views.html.get.index(comboHTML, returnedPollID))
+    Ok(views.html.viewpoll.index(comboHTML, returnedPollID))
   }
 
   def getRenderedSelect(pollBasicsList: List[PollBasics], pollID: Int): String = {
-    if (pollBasicsList.nonEmpty) pollBasicsList.map{p =>
+    if (pollBasicsList.length > 1) pollBasicsList.map{p =>
     val selected = if (p.pollId == pollID) " selected" else ""
         s"""<option value=${p.pollId}$selected>${p.pollTitle} (${p.pollId})</option>"""
-      }.mkString("""<select name="pollList" id="pollList">""","\n","</select>")
-    else ""
+      }.mkString("""<select tabindex="1" name="pollList" id="pollList">""","\n","</select>")
+    else """<div id="pollList" hidden=""><select name="pollList" id="pollList"></select></div>"""
   }
 
   def getRenderedPoll(pollPayload: GetPollPayload): String = {
     val htmlHeaderLineList: List[String] = List(
       s"""<form method="post" name="voteForm">""",
-      s"""<h2>${pollPayload.pollTitle} (${pollPayload.pollID})</h2>""",
-      s"""<h3>${pollPayload.pollDesc}</h2>""",
+      s"""<h3>${pollPayload.pollTitle} (${pollPayload.pollID})</h3>""",
+      s"""<h5>${pollPayload.pollDesc}</h5>""",
       pollPayload.uniqueIndividualIdentifierLabel match {
         case Some(s) => s"""$s: &nbsp;<input type="text" id="uniqueIndividualIdentifier" name="uniqueIndividualIdentifier"><br>"""
         case None => ""
       },
     )
-    val htmlFooterLineList: List[String] = List(
+    val htmlFooterLineList: List[String] = if (pollPayload.found) List(
       s"""<br>""",
       s"""<input type="submit" value="Cast Vote">""",
       s"""</form>""",
       s"""<div id="voteMessage" hidden=""></div>"""
-    )
+    ) else List.empty
     val htmlInputLineList: List[String] = pollPayload.pollOptions.map{o =>
       val inputType = if (pollPayload.allowMultipleSelections) "checkbox" else "radio"
-      s"""<input type="$inputType" name="pollOptions" value=${o.optionID}>${o.optionName}<br>"""
+      val voteCount = if (includeStaticVoteCountOnCastVotePage) {
+        val summaryVoteCount = pollPayload.voteSummaries.find(_.optionId == o.optionID).
+          getOrElse(Defaults.voteSummary).voteCount
+        s" ($summaryVoteCount)"
+      } else ""
+      s"""<input type="$inputType" name="pollOptions" value=${o.optionID} id="po${o.optionID}"> <label for="po${o.optionID}">${o.optionName}$voteCount</label><br>"""
     }
-
     (htmlHeaderLineList ++ htmlInputLineList ++ htmlFooterLineList).filter(_.nonEmpty).mkString("\n")
   }
 
@@ -79,6 +89,4 @@ class ViewPollController @Inject()(val controllerComponents: ControllerComponent
     val returnedPoll = getPollPayload(pollID)
     Json.toJson(returnedPoll)
   }
-
-  private def getPollID(requestMap: Map[String, Seq[String]]): Int = requestMap.getOrElse("p", Seq(getLatestPollID.toString)).head.toInt
 }

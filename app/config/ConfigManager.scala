@@ -10,10 +10,12 @@ class ConfigManager
 object ConfigManager extends BasicLogUtil with AutoClose {
   private val config = ConfigFactory.load()
 
-  private def getOptionalConfigValue[T](path: String, default: T): T = if(config.hasPath(path)) config.getString(path).asInstanceOf[T] else default
+  private def getOptionalConfigValue[T](path: String, default: T): T = if(config.hasPath(path)) config.getAnyRef(path).asInstanceOf[T] else default
 
   val title: String = getOptionalConfigValue("title", "PowlyPollington by Dinnk")
   val welcomeMessage: String = getOptionalConfigValue("welcomeMessage", title)
+
+  val includeStaticVoteCountOnCastVotePage: Boolean = getOptionalConfigValue("includeStaticVoteCountOnCastVotePage", false)
 
   val dbType: DBType = getOptionalConfigValue("db.type", "file") match {
     case s if s.toLowerCase.contains("mem") => MemoryDBType()

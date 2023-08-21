@@ -1,0 +1,6 @@
+@import config.ConfigManager
+@(renderedPollHTML: String, pollID: Int)
+
+  @results.main(ConfigManager.title + " - results") {
+    @Html(renderedPollHTML)
+  }

@@ -118,11 +118,13 @@ h1 {
 h2 {
     font-size: 2.6rem;
     margin-top: 3rem;
+    margin-bottom: 1rem;
 }
 
 h3 {
     font-size: 2rem;
-    margin-top: 3rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
 }
 
 h4 {
@@ -130,11 +132,20 @@ h4 {
 }
 
 h5 {
-    font-size: 1.15rem;
+    font-size: 1.12rem;
+    margin-top: 1rem;
+    margin-bottom: 2.25rem;
+    font-weight: normal;
+    font-style: italic;
 }
 
 h6 {
-    font-size: 0.96rem;
+    font-size: 1.12rem;
+    margin-top: 1rem;
+    margin-bottom: -10px;
+    font-weight: normal;
+    font-style: italic;
+    padding-bottom: -8px;
 }
 
 /* Prevent long strings from overflowing container */
@@ -675,4 +686,73 @@ sub {
     border-radius: 5px;
     padding: 1.5rem;
     margin: 2rem 0;
+}
+
+.resultsChart{
+    display: block;
+    width: 118%;
+    overflow-wrap: normal;
+    border-spacing: 0;
+    border: none;
+    background: transparent;
+}
+
+
+.resultsChart tbody{
+    display: block;
+    background: transparent;
+}
+
+.resultsChart tbody:after{                /* For IE9 and under, need to enclose floats... */
+    content: "";
+    display: block;
+    clear: both;
+    height: 0;
+    background: transparent;
+}
+
+.resultsChart tbody th,
+.resultsChart tbody td{
+    padding: 0.5rem 0 0.4rem 0.15rem;           /* Space around Bars. */
+    border: none;
+    background: transparent;
+}
+
+/* TH */
+.resultsChart tbody th{
+    font-weight: normal;
+    text-align: right;
+    padding-right: 0.3rem;
+    border: none;
+    background: transparent;
+}
+
+/* BARS */
+.resultsChart tbody td span{
+    position: relative;                   /* Needed for absolute-positioning of Bar-value. */
+    display: block;                       /* Expands <span> to fill <td> */
+    height: 34px;
+    background: #0a3599;
+    border: none;
+}
+
+/* BAR-VALUES */
+.resultsChart tbody td span b{
+    position: relative;
+    left: 100%;
+    top: 2px;
+    right: auto;
+    bottom: 0;
+    display: block;
+    padding: 0 0 0 0.5rem;
+    font-weight: normal;
+    border: none;
+    background: transparent;
+}
+
+.resultsChart tbody th.blankCell{
+    width: 26%;
+    height: 1px;
+    border: none;
+    background: transparent;
 }

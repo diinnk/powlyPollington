@@ -1,6 +1,6 @@
 package common
 
-import payloads.GetPollPayload
+import payloads.{GetPollPayload, PollOptions, VoteSummary}
 
 import java.sql.Timestamp
 
@@ -20,5 +20,9 @@ object Defaults {
     voteSummaries = List.empty,
     voteDetail = List.empty
   )
+
+  val voteSummary: VoteSummary = VoteSummary(0,0)
+
+  val pollOptions: PollOptions = PollOptions(optionID = 0, "")
 
 }

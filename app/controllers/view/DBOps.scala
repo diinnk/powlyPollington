@@ -1,7 +1,6 @@
 package controllers.view
 
 import common.Constants.{pollDBTableName, pollOptionsDBTableName, pollVotesDBTableName}
-import common.Defaults
 import config.ConfigManager.limitAllRowCount
 import db.PollDBHelper
 import payloads.{GetPollPayload, PollBasics, PollOptions, VoteDetail, VoteSummary}
@@ -11,63 +10,60 @@ import scala.annotation.tailrec
 
 object DBOps extends PollDBHelper {
   def getPollPayload(pollID: Int): GetPollPayload = {
-    if (pollID == 0)
-      Defaults.getPollPayload.copy(message = Option("No polls have been created yet"))
-    else {
-      implicit val h2Conn: Connection = getH2Conn
-      autoClose {
-        val (found, pollTitle, pollDesc, added, allowMultipleSelections, allowMultipleIndividualVoteActions, uniqueIndividualIdentifierLabel) = {
-          val pollDetailRS = getH2ResultSet(
-            s"""select
-               |  pollTitle,
-               |  pollDesc,
-               |  added,
-               |  allowMultipleSelections,
-               |  allowMultipleIndividualVoteActions,
-               |  uniqueIndividualIdentifierLabel
-               |from $pollDBTableName
-               |where pollID = $pollID
-               |;""".stripMargin
-          )
-          if (pollDetailRS.next()) {
-            val uniqueIndividualIdentifierLabel = pollDetailRS.getString("uniqueIndividualIdentifierLabel")
-            (true,
-              pollDetailRS.getString("pollTitle"),
-              pollDetailRS.getString("pollDesc"),
-              pollDetailRS.getTimestamp("added"),
-              pollDetailRS.getBoolean("allowMultipleSelections"),
-              pollDetailRS.getBoolean("allowMultipleIndividualVoteActions"),
-              if (uniqueIndividualIdentifierLabel == null) None else Option(uniqueIndividualIdentifierLabel)
-            )
-          } else
-            (false, "Unknown poll title", "", new Timestamp(0), false, false, None)
-        }
-
-        val pollOptions =
-          if (found)
-            getPollOptionJsonString(getH2ResultSet(s"select optionName, optionId from $pollOptionsDBTableName where pollID = $pollID"))
-          else List.empty
-
-        val votSummaries = getVoteSummaries(pollID)
-        val voteDetail = getVoteDetail(pollID)
-
-        GetPollPayload(
-          message = Option(s"$pollID ${if (found) "found" else "not found"}"),
-          found = found,
-          pollID = pollID,
-          pollTitle = pollTitle,
-          pollDesc = pollDesc,
-          pollAdded = added,
-          allowMultipleSelections = allowMultipleSelections,
-          allowMultipleIndividualVoteActions = allowMultipleIndividualVoteActions,
-          uniqueIndividualIdentifierLabel = uniqueIndividualIdentifierLabel,
-          pollOptions = pollOptions,
-          successful = None,
-          voteSummaries = votSummaries,
-          voteDetail = voteDetail
+    implicit val h2Conn: Connection = getH2Conn
+    autoClose {
+      val (found, pollTitle, pollDesc, added, allowMultipleSelections, allowMultipleIndividualVoteActions, uniqueIndividualIdentifierLabel) = {
+        val pollDetailRS = getH2ResultSet(
+          s"""select
+             |  pollTitle,
+             |  pollDesc,
+             |  added,
+             |  allowMultipleSelections,
+             |  allowMultipleIndividualVoteActions,
+             |  uniqueIndividualIdentifierLabel
+             |from $pollDBTableName
+             |where pollID = $pollID
+             |;""".stripMargin
         )
+        if (pollDetailRS.next()) {
+          val uniqueIndividualIdentifierLabel = pollDetailRS.getString("uniqueIndividualIdentifierLabel")
+          (true,
+            pollDetailRS.getString("pollTitle"),
+            pollDetailRS.getString("pollDesc"),
+            pollDetailRS.getTimestamp("added"),
+            pollDetailRS.getBoolean("allowMultipleSelections"),
+            pollDetailRS.getBoolean("allowMultipleIndividualVoteActions"),
+            if (uniqueIndividualIdentifierLabel == null) None else Option(uniqueIndividualIdentifierLabel)
+          )
+        } else
+          (false, "", "", new Timestamp(0), false, false, None)
       }
+
+      val pollOptions =
+        if (found)
+          getPollOptionJsonString(getH2ResultSet(s"select optionName, optionId from $pollOptionsDBTableName where pollID = $pollID"))
+        else List.empty
+
+      val votSummaries = getVoteSummaries(pollID)
+      val voteDetail = getVoteDetail(pollID)
+
+      GetPollPayload(
+        message = Option(s"$pollID ${if (found) "found" else "not found"}"),
+        found = found,
+        pollID = pollID,
+        pollTitle = pollTitle,
+        pollDesc = pollDesc,
+        pollAdded = added,
+        allowMultipleSelections = allowMultipleSelections,
+        allowMultipleIndividualVoteActions = allowMultipleIndividualVoteActions,
+        uniqueIndividualIdentifierLabel = uniqueIndividualIdentifierLabel,
+        pollOptions = pollOptions,
+        successful = None,
+        voteSummaries = votSummaries,
+        voteDetail = voteDetail
+      )
     }
+
   }
 
   @tailrec private def getPollOptionJsonString(optionsRS: ResultSet, optionsStringList: List[(String, Int)] = List.empty): List[PollOptions] =
@@ -135,21 +131,24 @@ object DBOps extends PollDBHelper {
     implicit val h2Conn: Connection = getH2Conn
     autoClose {
       val rs = getH2ResultSet(
-        s"""select top $limitAllRowCount
-           |   *
-           |from (
+        s"""with mainLimitedList as (
            |  select top $limitAllRowCount
            |    pollId,
            |    pollTitle
            |  from $pollDBTableName
-           |  union
-           |  select top $limitAllRowCount
+           |  order by pollId desc
+           | )
+           | select
            |    pollId,
            |    pollTitle
-           |  from $pollDBTableName a
-           |  where a.pollId = $currentPollID
-           |)
-           |order by pollId desc
+           | from mainLimitedList
+           | union
+           | select
+           |    pollId,
+           |    pollTitle
+           | from $pollDBTableName a
+           | where a.pollId = $currentPollID
+           | order by pollId desc
            |;""".stripMargin
       )
 

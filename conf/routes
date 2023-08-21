@@ -8,3 +8,5 @@ GET     /createPoll                 controllers.CreatePollController.index()
 POST    /createPoll                 controllers.CreatePollController.create()
 
 POST    /castVote                   controllers.CastVoteController.castVote()
+
+GET     /results                    controllers.ResultsController.index()
