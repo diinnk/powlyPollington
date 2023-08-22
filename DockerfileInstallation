@@ -1,7 +1,0 @@
-FROM ghcr.io/diinnk/powlypollington:latest
-
-COPY yourApplication.conf /usr/src/app/conf/application.conf
-
-WORKDIR /usr/src/app
-
-CMD ["bin/powlypollington"]
