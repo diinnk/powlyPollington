@@ -28,5 +28,11 @@ jobs:
         distribution: 'temurin'
         cache: 'sbt'
     - name: Run tests
-      run: sbt test -Dsbt.gigahorse=false
+      run: sbt test
+    - name: Run sbt stage
+      run: sbt stage
+    - name: Build container
+      run: docker build -t ghcr.io/diinnk/powlypollington:latest -f  target/universal
+    - name: 'Login to GitHub Container Registry'
+      run: echo $CR_PAT | docker login ghcr.io -u diinnk --password-stdin
 

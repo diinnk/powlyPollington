@@ -3,11 +3,6 @@ let pollID;
 const voteForm = document.forms.namedItem('voteForm');
 voteForm.onsubmit = submitVote
 
-const docPL = document.getElementById('pollList')
-docPL.onchange = (_)  => {
-    window.location.replace('./.?p='+docPL.value);
-}
-
 function submitVote() {
     let xhr = new XMLHttpRequest();
     const formData = new FormData(voteForm);
