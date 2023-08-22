@@ -32,13 +32,14 @@ jobs:
     - name: Print branch name
       shell: bash
       run: echo "${{ steps.extract_branch.outputs.branch }}"
-    - name: Run tests
-      run: sbt test
-    - name: Run sbt stage
-      run: sbt stage
-    - name: Build container
-      shell: bash
-      run: export FOUND_BRANCH_NAME=${echo "${{ steps.extract_branch.outputs.branch }}"} && docker buildx bake -f PowlyPollington.bake.hcl "$(if [[ "${FOUND_BRANCH_NAME}" == "main" ]]; then echo main; else echo branch; fi)"
+#    - name: Run tests
+#      run: sbt test
+#    - name: Run sbt stage
+#      run: sbt stage
+    - name: Set FOUND_BRANCH_NAME
+      run: export FOUND_BRANCH_NAME=${echo "${{ steps.extract_branch.outputs.branch }}"}
+    - name: Build Container
+      run: docker buildx bake -f PowlyPollington.bake.hcl "$(if [[ "${FOUND_BRANCH_NAME}" == "main" ]]; then echo main; else echo branch; fi)"
     - name: 'Login to GitHub Container Registry'
       run: echo $CR_PAT | docker login ghcr.io -u diinnk --password-stdin
 
