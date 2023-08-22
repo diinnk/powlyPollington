@@ -17,8 +17,8 @@ group "default" {
 }
 
 target "default" {
-    context = "build"
-    dockerfile = "Dockerfile"
+    context = "target/universal"
+    dockerfile = "../../Dockerfile"
 }
 
 target "main" {
