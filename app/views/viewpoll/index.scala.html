@@ -1,7 +1,8 @@
-@import config.ConfigManager
+@import views.html.viewpoll.main
+@import com.github.diinnk.powly.config.ConfigManager
 @(renderedPollHTML: String, pollID: Int)
 
-  @viewpoll.main(ConfigManager.title + " - Vote ("+pollID+")") {
+  @main(ConfigManager.title + " - Vote ("+pollID+")") {
     <h2>
     @ConfigManager.welcomeMessage
     </h2>
@@ -9,6 +10,7 @@
     @Html(renderedPollHTML)
 
     <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.versioned("javascripts/pollList.js")" type="text/javascript"></script>
     <script>
       pollID = @pollID
     </script>
