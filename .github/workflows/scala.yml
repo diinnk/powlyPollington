@@ -16,9 +16,7 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -27,12 +25,17 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: 'sbt'
+    - name: Extract branch name
+      shell: bash
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      id: extract_branch
+
     - name: Run tests
       run: sbt test
     - name: Run sbt stage
       run: sbt stage
     - name: Build container
-      run: docker build -t ghcr.io/diinnk/powlypollington:latest -f  target/universal
+      run: docker buildx bake -f PowlyPollington.bake.hcl "pr"
     - name: 'Login to GitHub Container Registry'
       run: echo $CR_PAT | docker login ghcr.io -u diinnk --password-stdin
 
