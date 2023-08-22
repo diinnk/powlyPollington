@@ -26,7 +26,7 @@ target "main" {
     tags = tag("latest")
 }
 
-target "branch" {
+target "pr" {
     inherits = ["default"]
     tags = tag("pr")
 }
