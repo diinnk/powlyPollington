@@ -2,7 +2,7 @@
 # tagging
 variable "DOCKER_REGISTRY"      {default = "ghcr.io/diinnk"}
 variable "IMAGE_NAME"           {default = "powlypollington"}
-variable "GIT_BRANCH"           {default = "main"}
+variable "FOUND_BRANCH_NAME"    {default = "main"}
 
 function "tag" {
     params = [tag]
@@ -29,5 +29,5 @@ target "main" {
 
 target "branch" {
     inherits = ["default"]
-    tags = tag("${steps.extract_branch.outputs.branch}")
+    tags = tag("${FOUND_BRANCH_NAME}")
 }
