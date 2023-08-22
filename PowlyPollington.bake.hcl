@@ -29,5 +29,5 @@ target "main" {
 
 target "branch" {
     inherits = ["default"]
-    tags = tag("${{ steps.extract_branch.outputs.branch }}")
+    tags = tag("${steps.extract_branch.outputs.branch}")
 }
