@@ -30,8 +30,8 @@ jobs:
       shell: bash
       run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
       id: extract_branch
-#    - name: Run tests
-#      run: sbt test
+    - name: Run tests
+      run: sbt test
     - name: Run sbt stage
       run: sbt stage
     - name: Login to ghcr
