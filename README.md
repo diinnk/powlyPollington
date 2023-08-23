@@ -1,10 +1,23 @@
 # PowlyPollington
 
-Simple polling tool developed in Scala and, initially, intended to be run within a docker/podman container
+Simple polling tool developed in Scala and, initially, intended to be run within a 
+docker/podman container
+
+**Suggested docker/podman usage**
+
+Create a new application.conf and update the 
+associated filename referenced in DockerInstallation file. Build your container 
+locally using something like:
+```
+docker run -d \
+   -p 9000:9000 \
+   -v /path/to/your/local/powly/db:/opt/powly \
+   -v /path/to/your/local/powly/db/conf/application.conf:/usr/src/app/conf/application.conf \
+   --name powly \
+   ghcr.io/diinnk/powlypollington:latest
+```
 
 **TODO:**
- - Links in Results and view
- - Add Poll pull down to results
  - Create FE
  - Vote validation logic
  - Edit a poll
