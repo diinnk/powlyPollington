@@ -34,7 +34,7 @@ val rawLastLine: String = getRawLastLine
 //swaggerAPIVersion := rawLastLine
 
 Compile / sourceGenerators += Def.task {
-  val jenkinsBuild = sys.env.getOrElse("BUILD_NUMBER", "0-SNAPSHOT")
+  val githubActionsBuild = sys.env.getOrElse("BUILD_NUMBER", "0-SNAPSHOT")
   val file = (Compile / sourceManaged).value / "com/github/diinnk/powly/VersionInfo.scala"
   val rawVerNum = rawLastLine.replaceFirst(" -.*$", "")
   val rawVerText = rawLastLine.replaceFirst(rawVerNum, "").stripPrefix(" - ")
@@ -45,8 +45,8 @@ Compile / sourceGenerators += Def.task {
        |object VersionInfo {
        |  val rawVerNum: String = "$rawVerNum"
        |  val rawVerText: String = "$rawVerText"
-       |  val buildNumber: String = "$jenkinsBuild"
-       |  val verNumCombo: String = "$rawVerNum.$jenkinsBuild"
+       |  val buildNumber: String = "$githubActionsBuild"
+       |  val verNumCombo: String = "$rawVerNum.$githubActionsBuild"
        |  val finalVerStr: String = "PowlyPollington: "+verNumCombo+" - $rawVerText"
        |}""".stripMargin
   )
