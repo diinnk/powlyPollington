@@ -35,5 +35,6 @@ case class CreatePollRequest(message: Option[String],
                              allowMultipleIndividualVoteActions: Boolean,
                              uniqueIndividualIdentifierLabel: Option[String],
                              pollOptions: List[PollOptions],
-                             successful: Option[Boolean]
+                             successful: Option[Boolean],
+                             createdID: Option[Int]
                             ) extends PollDetail

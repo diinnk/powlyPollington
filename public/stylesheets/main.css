@@ -407,10 +407,10 @@ th {
     font-weight: bold;
 }
 
-tr:nth-child(even) {
-    /* Set every other cell slightly darker. Improves readability. */
-    background-color: var(--accent-bg);
-}
+/*tr:nth-child(even) {*/
+/*    !* Set every other cell slightly darker. Improves readability. *!*/
+/*    background-color: var(--accent-bg);*/
+/*}*/
 
 table caption {
     font-weight: bold;
@@ -438,6 +438,18 @@ label {
 }
 textarea:not([cols]) {
     width: 100%;
+}
+form[id="createPollForm"] {
+    display: table;
+    & p {
+        display: table-row;
+    }
+    & label {
+        display: table-cell;
+    }
+    & input {
+        display: table-cell;
+    }
 }
 
 /* Add arrow to drop-down */

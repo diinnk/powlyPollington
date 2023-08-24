@@ -23,7 +23,8 @@ object PowlyTestSetup {
         PollOptions(1, "Vanilla Tangerine Cream Ale"),
         PollOptions(1, "Luigi''s Salted Lime Ale"),
       ),
-      successful = None
+      successful = None,
+      createdID = None
     ))
 
 }

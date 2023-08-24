@@ -16,6 +16,8 @@ object ConfigManager extends BasicLogUtil with AutoClose {
   val welcomeMessage: String = getOptionalConfigValue("welcomeMessage", title)
 
   val includeStaticVoteCountOnCastVotePage: Boolean = getOptionalConfigValue("includeStaticVoteCountOnCastVotePage", false)
+  val hideCreateAPoleOnFrontPage: Boolean = getOptionalConfigValue("hideCreateAPoleOnFrontPage", false)
+  val resultsPageRefreshIntervalSeconds: Int = getOptionalConfigValue("resultsPageRefreshIntervalSeconds", 300)
 
   val dbType: DBType = getOptionalConfigValue("db.type", "file") match {
     case s if s.toLowerCase.contains("mem") => MemoryDBType()

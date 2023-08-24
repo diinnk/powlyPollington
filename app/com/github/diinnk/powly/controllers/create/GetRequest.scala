@@ -6,7 +6,7 @@ import play.api.libs.json.JsValue
 
 class GetRequest(json: JsValue) extends GetAttribute(json) {
   def get: CreatePollRequest = {
-    val pollOptions: List[PollOptions] = getAttrList("pollOptions").zipWithIndex.
+    val pollOptions: List[PollOptions] = getAttrList[String]("pollOptions").zipWithIndex.
       map(o => PollOptions(optionID = o._2+1, optionName = cleanDBString(o._1)))
     val pollTitle: String = cleanDBString(getAttr("pollTitle"))
 
@@ -18,7 +18,8 @@ class GetRequest(json: JsValue) extends GetAttribute(json) {
       allowMultipleIndividualVoteActions = getAttr("allowMultipleIndividualVoteActions", false),
       uniqueIndividualIdentifierLabel = cleanDBString(getAttrOption("uniqueIndividualIdentifierLabel")),
       pollOptions = pollOptions,
-      successful = None
+      successful = None,
+      createdID = None
     )
   }
 
