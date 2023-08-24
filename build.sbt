@@ -47,7 +47,7 @@ Compile / sourceGenerators += Def.task {
        |  val rawVerText: String = "$rawVerText"
        |  val buildNumber: String = "$jenkinsBuild"
        |  val verNumCombo: String = "$rawVerNum.$jenkinsBuild"
-       |  val finalVerStr: String = "DEM: "+verNumCombo+" - $rawVerText"
+       |  val finalVerStr: String = "PowlyPollington: "+verNumCombo+" - $rawVerText"
        |}""".stripMargin
   )
   Seq(file)
