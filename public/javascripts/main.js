@@ -18,7 +18,8 @@ function submitVote() {
     for (let i = 0; i < length; i++)
         pollOptionsInt.push(parseInt(pollOptions[i]));
 
-    const jsonObj = {pollId: pollID, optionId: pollOptionsInt, uniqueIndividualIdentifier: uniqueIndividualIdentifier}
+    let jsonObj = {pollId: pollID, optionId: pollOptionsInt}
+    if (uniqueIndividualIdentifier !== null) jsonObj.uniqueIndividualIdentifier = uniqueIndividualIdentifier
     xhr.send(JSON.stringify(jsonObj));
 
     xhr.onreadystatechange = function() {

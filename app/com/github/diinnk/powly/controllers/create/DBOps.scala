@@ -34,10 +34,11 @@ object DBOps extends PollDBHelper {
               ";"
             )
         )
+        newPollID
       }
     } else throw NoPollOptionsFoundException(s"No poll options provided for new poll titled '${createRequest.pollTitle}")
   } match {
-    case Success(_) => createRequest.copy(successful = Option(true), message = Option("DB Inserts successful"))
+    case Success(s) => createRequest.copy(successful = Option(true), message = Option("DB Inserts successful"), createdID = Option(s))
     case Failure(e) =>
       log.error(s"Failed to successfully add the DB rows for $createRequest\n${e.getMessage}")
       createRequest.copy(successful = Option(false), message = Option(e.getMessage))

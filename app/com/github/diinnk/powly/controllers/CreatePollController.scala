@@ -14,8 +14,8 @@ import javax.inject.{Inject, Singleton}
 class CreatePollController @Inject()(val controllerComponents: ControllerComponents)
   extends BaseController with PollDBHelper with GlobalWritesAndFormats {
 
-  def index: Action[AnyContent] = Action { implicit _: Request[AnyContent] =>
-    Ok(views.html.create.index("222"))
+  def index: Action[AnyContent] = Action {
+    Ok(views.html.create.index())
   }
 
   def create: Action[AnyContent] = Action { implicit r: Request[AnyContent] =>

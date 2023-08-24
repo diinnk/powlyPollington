@@ -18,8 +18,8 @@ docker run -d \
 ```
 
 **TODO:**
- - Create FE
  - Vote validation logic
+ - Delete a poll
  - Edit a poll
    - edit title
    - edit desc
@@ -27,10 +27,10 @@ docker run -d \
    - add a poll option
    - delete a poll option
    - edit poll voting attribution
- - Delete a poll
  - Edit FE
- - 
+ - Fix some funky results pages when all the options have short names
  - Authentication for creation, deletion, modification and result viewing of polls
  - Swagger docs
  - Prettier front-end
  - Various warnings and error handling on config definition for default usernames/passwords and the like
+ - Request throttling to stop spam, injection etc

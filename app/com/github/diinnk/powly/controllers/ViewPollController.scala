@@ -1,6 +1,6 @@
 package com.github.diinnk.powly.controllers
 
-import com.github.diinnk.powly.config.ConfigManager.includeStaticVoteCountOnCastVotePage
+import com.github.diinnk.powly.config.ConfigManager.{hideCreateAPoleOnFrontPage, includeStaticVoteCountOnCastVotePage}
 import com.github.diinnk.powly.common.payloads.GetPollPayload
 import com.github.diinnk.powly.common.{Defaults, GlobalWritesAndFormats}
 import com.github.diinnk.powly.controllers.Common.{getPollID, getRenderedSelect}
@@ -41,12 +41,15 @@ class ViewPollController @Inject()(val controllerComponents: ControllerComponent
         case None => ""
       },
     )
-    val htmlFooterLineList: List[String] = if (pollPayload.found) List(
+    val htmlFooterLineListPt1: List[String] = if (pollPayload.found) List(
       s"""<br>""",
       s"""<input type="submit" value="Cast Vote"><button type="button" style="float: right;" onclick="window.location.replace('./results?p=${pollPayload.pollID}')">See Results</button>""",
-      s"""</form>""",
-      s"""<div id="voteMessage" hidden=""></div>"""
+      s"""</form>"""
     ) else List.empty
+    val htmlFooterLineListPt2 = List(
+      if (hideCreateAPoleOnFrontPage) "" else s"""<div><button type="button" style="float: left;" onclick="window.location.replace('./createPoll')">Create Poll</button></div>""",
+      s"""<div id="voteMessage" hidden=""></div>"""
+    )
     val htmlInputLineList: List[String] = pollPayload.pollOptions.map{o =>
       val inputType = if (pollPayload.allowMultipleSelections) "checkbox" else "radio"
       val voteCount = if (includeStaticVoteCountOnCastVotePage) {
@@ -56,7 +59,7 @@ class ViewPollController @Inject()(val controllerComponents: ControllerComponent
       } else ""
       s"""<input type="$inputType" name="pollOptions" value=${o.optionID} id="po${o.optionID}"> <label for="po${o.optionID}">${o.optionName}$voteCount</label><br>"""
     }
-    (htmlHeaderLineList ++ htmlInputLineList ++ htmlFooterLineList).filter(_.nonEmpty).mkString("\n")
+    (htmlHeaderLineList ++ htmlInputLineList ++ htmlFooterLineListPt1 ++ htmlFooterLineListPt2).filter(_.nonEmpty).mkString("\n")
   }
 
   def viewPoll: Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
