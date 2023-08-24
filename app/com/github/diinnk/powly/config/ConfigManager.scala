@@ -1,5 +1,6 @@
 package com.github.diinnk.powly.config
 
+import com.github.diinnk.powly.VersionInfo
 import com.github.diinnk.powly.common.{AutoClose, BasicLogUtil, DBType, FileDBType, MemoryDBType}
 import com.typesafe.config.ConfigFactory
 
@@ -41,8 +42,6 @@ object ConfigManager extends BasicLogUtil with AutoClose {
   log.info(s"welcomeMessage: $welcomeMessage")
   log.info(s"dbType: $dbType")
   log.info(s"dbFilePath: $dbFilePath")
+  log.info(VersionInfo.finalVerStr)
 
-  //TODO: remove me
-  log.info(s"dbFileUser: $dbFileUser")
-  log.info(s"dbFilePassword: $dbFilePassword")
 }
