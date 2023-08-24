@@ -2,6 +2,7 @@ package com.github.diinnk.powly.controllers
 
 import com.github.diinnk.powly.common.payloads.GetPollPayload
 import com.github.diinnk.powly.common.{Defaults, GlobalWritesAndFormats}
+import com.github.diinnk.powly.config.ConfigManager.resultsPageRefreshIntervalSeconds
 import com.github.diinnk.powly.controllers.Common.{getPollID, getRenderedSelect}
 import com.github.diinnk.powly.controllers.view.DBOps.getPollPayload
 import com.github.diinnk.powly.db.PollDBHelper
@@ -18,8 +19,11 @@ class ResultsController @Inject()(val controllerComponents: ControllerComponents
     val (_, renderedSelect) = getRenderedSelect(returnedPollID)
     val poll = getPollPayload(returnedPollID)
     val renderedPayload = renderedSelect ++ getRenderedPoll(poll)
+    val metaRefresh =
+      if (resultsPageRefreshIntervalSeconds > 0) s"""<meta http-equiv="refresh" content="$resultsPageRefreshIntervalSeconds">"""
+      else ""
 
-    Ok(views.html.results.index(renderedPayload,returnedPollID))
+    Ok(views.html.results.index(renderedPayload,returnedPollID, metaRefresh))
   }
 
   def getRenderedPoll(poll: GetPollPayload): String = {

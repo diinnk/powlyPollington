@@ -1,8 +1,8 @@
 @import views.html.results.main
 @import com.github.diinnk.powly.config.ConfigManager
-@(renderedPollHTML: String, pollID: Int)
+@(renderedPollHTML: String, pollID: Int, metaRefresh: String)
 
-  @main(ConfigManager.title + " - results") {
+  @main(ConfigManager.title + " - results", metaRefresh) {
     @Html(renderedPollHTML)
     <script src="@routes.Assets.versioned("javascripts/pollList.js")" type="text/javascript"></script>
   }
